@@ -1,24 +1,29 @@
-# gafcs
+# gaigen-clojure
 
-FIXME: description
+A rewrite of gaigen http://g25.sourceforge.net/ in clojure.
+The gaigen code generator seems to be abandoned.
+That is too bad, I need a port to clojure so this
+project is my effort to get some life back in gaigen as
+well as providing what is needed for the freed-linkage-assembler.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Download from https://github.com/phreed/gaigen-clojure.
 
 ## Usage
 
-FIXME: explanation
+Can be run as a standalone application for generating
+non-clojure outputs or as a macro library for use in clojure.
 
     $ java -jar gafcs-0.1.0-standalone.jar [args]
 
 ## Options
 
-FIXME: listing of options this app accepts.
+Still under development.
 
 ## Examples
 
-...
+
 
 ### Bugs
 
