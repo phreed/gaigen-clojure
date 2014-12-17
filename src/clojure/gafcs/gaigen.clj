@@ -189,16 +189,28 @@
  Requests a conversion function to the code generator back-end.
  By default each smv has convertors to and from mv.
  Specific convertors from smv to smv can be requested.
+ args:
+  - source
+       The data-type to be converted
+  - target
+       The data-type to be produced
 
  options:
-  - arg-nameN.
+  - :arg-source-name
        Specifies the name of argument N.
        This only affects the name of the argument inside the generated function.
        Specifying this name may be superfluous, but it can improve readability,
        especially for code completion.
+  - :doc
+       Provides the doc-string for the object produced
+  - :rename
+       Changes the name of the generated function to the value of the attribute.
+       For example, allows you to rename a function gp to geometricProduct.
+       Sometimes this attribute is required to avoid name-clashes,
+       for example if you want the define the same function for two different metrics.
   "
-  [name options settings]
-  nil)
+  ([source target] nil)
+  ([source target options] nil) )
 
 ;; Requests a multi-function to the code generator back-end.
 ;; options:
@@ -225,7 +237,7 @@
 ;;       The optional metric attribute specifies the usage of a nondefault metric (case insensitive).
 ;;       By default, the metric "default" is used.
 ;;       By using this attribute a different metric may be used for the function, e.g., metric="euclidean".
-;;  - doc-string
+;;  - :doc
 ;;       Use the this optional attribute to add any extra user comments to the function documentation.
 ;;       For example, one could use the comment to explain what a certain function is used for.
 

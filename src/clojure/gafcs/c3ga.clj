@@ -153,25 +153,23 @@
 
 (def-fun-random-double :output-name "genrand" :optionGen "libc")
 
-(def-con _vector-e3ga
-  "Extras vector part of point"
-  normalized-point :argName1 "P")
+(def-con normalized-point vector-e3ga
+  {:arg-source-name "P"
+  :doc "Extracts vector part of point"})
 
-(def-con _vector-e3ga
-  "Extras vector part of dual sphere"
-  dual-sphere :argName1 "S" )
+(def-con dual-sphere vector-e3ga
+  {:arg-source-name "S"
+  :doc "Extracts vector part of dual sphere"})
 
-(def-con _bivector-e3ga
-  "Extracts Euclidean bivector part of Euclidean rotor"
-  rotor-e3ga  )
+(def-con rotor-e3ga bivector-e3ga
+  {:doc "Extracts Euclidean bivector part of Euclidean rotor"})
 
-(def-con _dual-sphere
-  "Converts a normalized point to a dual sphere"
-  normalized-point
-  :output-name "pointToSphere"
-  :argName1="P" )
+(def-con normalized-point dual-sphere
+  {:arg-source-name "P"
+   :doc "Converts a normalized point to a dual sphere"
+   :rename "point-to-sphere"})
 
-(def-con _even-versor point-pair)
+(def-con point-pair even-versor)
 
 
 (def-fun-cga-point vector-e3ga)
