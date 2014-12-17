@@ -35,6 +35,6 @@ Still under development.
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Fred Eisele
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the GNU Public License, the same as the original gaigen.
