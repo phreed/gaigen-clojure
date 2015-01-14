@@ -1,4 +1,4 @@
-(ns gafcs.core
+(ns geometric-algebra.core
   (:gen-class))
 
 (defn -main

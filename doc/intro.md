@@ -1,3 +1,3 @@
-# Introduction to gafcs
+# Introduction to geometric-algebra
 
 TODO: write [great documentation](http://jacobian.org/writing/great-documentation/what-to-write/)

@@ -15,7 +15,7 @@ Download from https://github.com/phreed/gaigen-clojure.
 Can be run as a standalone application for generating
 non-clojure outputs or as a macro library for use in clojure.
 
-    $ java -jar gafcs-0.1.0-standalone.jar [args]
+    $ java -jar geometric-algebra-0.1.0-standalone.jar [args]
 
 ## Options
 
