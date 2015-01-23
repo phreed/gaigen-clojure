@@ -44,19 +44,5 @@
                eo123 eo12n eo13n eo23n e123n
                eo123n])
 
-(defrecord Term [eo e1 e2 e3 en])
-
-
-
-(comment "Computes the geometric product of two multivectors")
-;;(defn gp
-;;	"group 0  x  group gn -> group gn"
-;;  [mv1 mv2]
-;;  (let [elem (for [k1 (keys mv1) k2 (keys mv2)
-;;                   :let [co (* (k1 mv1) (k2 mv2))]]
-;;               (
-;;                [(get-ip-key #{k1 k2}) (get-op-key #{k1 k2}) co])]
-
-
 
 
