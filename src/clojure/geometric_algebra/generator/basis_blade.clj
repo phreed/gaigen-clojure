@@ -6,167 +6,93 @@
             [core-aux.pending :as aux]
             [clojure.math.combinatorics :as combo]))
 
-(defrecord BasisBlade [^int blade ^double weight])
+(defrecord BasisBlade [^int blade ^int grade ^double weight])
+
+(defrecord BasisBladeType [id coordinates title generated? dual?])
+
+(defn class-name [id] (str "_" id))
+
+(defn grade
+  "Calculate the grade of a coordinate.
+  bc - bitwise representation of coordinate.
+
+  Count the number of active bits."
+  [bc] (aux/bit-count bc))
+
 
 (defn make
   "Data structure representing a blade (coordinate + scale factor)
 
   bc - bitwise representation of coordinate
   wt - scale factor"
-  [bc wt] (->BasisBlade bc wt))
+  [bc wt] (->BasisBlade bc (grade bc) wt))
 
-(defn basis-blade-sign
+(defn sign
   "This function computes the sign change
   due to reordering of two basis blades
   into canonical order.
 
-  a - bitwise representation of coordinate
-  b - bitwise representation of coordinate
+  ac - bitwise representation of coordinate
+  bc - bitwise representation of coordinate
 
   An even number of swaps => return +1.0
   An odd number of swaps  => return -1.0
 
   see geometric-algebra Fig. 19.1"
-  [a b]
-  (loop [a (bit-shift-right a 1), sum 0]
-    (if (= 0 a)
+  [ac bc]
+  (loop [n (bit-shift-right ac 1), sum 0]
+    (if (= 0 n)
       (if (even? sum) +1 -1)
-      (recur (bit-shift-right a 1)
-             (+ sum (aux/bit-count (bit-and a b)))))))
-
-(def metric {#{2r10000 2r00001} -1,
-             #{2r01000}  1,
-             #{2r00100}  1,
-             #{2r00010}  1})
-
-(defn basis-blade-diagonal-product
-  "Geometric product of basis blades.
-  (see geometric-algebra fig. 19.2)
-  This function computes the outer
-  and inner (metric) products
-  for a diagonal basis."
-  [a b outer?]
-  (let [a-blade (:blade a), b-blade (:blade b)]
-    (if (and outer?
-             ((complement zero?) (bit-and a-blade b-blade)))
-      []
-      (make (bit-xor a-blade b-blade)
-            (* (basis-blade-sign a-blade b-blade)
-               (:weight a) (:weight b))) )))
-
-(defn basis-blade-outer-product [a b]
-  (basis-blade-orthometric-product a b true))
-
-(defn basis-blade-product [a b]
-  (basis-blade-orthometric-product a b false))
-
-(defn basis-blade-product-diagonalized
-  "Geometric product of basis blades.
-  (see geometric-algebra fig. 19.2)
-  This function computes the outer
-  and inner (metric) products
-  for a diagonal basis."
-  [a b]
-  (let [a-blade (:blade a), b-blade (:blade b)]
-    (make (bit-xor a-blade b-blade)
-          (* (basis-blade-sign a-blade b-blade)
-             (:weight a) (:weight b))) ))
-
-(defn basis-blade-outer-product
-  "The outer product is independent of the metric."
-  [a b]
-  (let [a-blade (:blade a), b-blade (:blade b)]
-    (when (zero? (bit-and a-blade b-blade))
-      (basis-blade-product-diagonalized a b))))
-
-(defn basis-blade-total-product
-  "The total product.
-  The non-diagonal nature of
-  the metric comes into play.
-  The blades are checked for diagonality and
-  if they pass then the basic function can be called.
-  If it is not diagonal then the basis
-  needs to be diagonalized first.
-  Diagonalization may introduce multiple
-  terms in the result."
-  [a b]
-  (basis-blade-product-diagonalized a b))
-
-
-(defn total-product
- "Computes the total-product of two multivectors.
-  This is simply the aggregate of the
-  total-products of all pairings of the multivectors terms."
-  [a b]
-  (loop [pairs (for [at (:bases a), bt (:bases b)] [at bt])
-         res {}]
-    (if (empty? pairs)
-      res
-      (let [terms (apply basis-blade-total-product (first pairs))]
-      (recur (rest pairs)
-             (apply assoc res terms))))))
-
-
-
-(defrecord Type [key bases name generated? dual?])
-
-(defn make->type
-  ""
-  [key bases name] (->Type key bases name false false))
-
-
-(defn classname [name] (str "_" name))
-
-(defn basis-blade-grade
-  "Calculate the grade of a coordinate
-  bc - bitwise representation of coordinate.
-  Count the number of active bits."
-  [b]
-  (loop [cnt 0 b b]
-    (if (= 0 b)
-      cnt
-      (let [b1 (bit-shift-right b 1)
-            incr (if (bit-test b 0) 1 0)]
-        (recur (+ cnt incr) b1)))))
-
+      (recur (bit-shift-right n 1)
+             (+ sum (grade (bit-and n bc)))))))
 
 
 (defn product
-  "Calculate the product between two coordinates
-  a - bitwise representation of coordinate
-  b - bitwise representation of coordinate
-  returns a blade."
-  [a  b]
-  (make (bit-xor a b) (basis-blade-sign a b)))
+  "Calculate the product between two coordinates.
+  (see geometric-algebra fig. 19.2)
+  This function computes the product
+  for a diagonal basis.
+  returns a blade.
 
+  In order for memoization to work correctly
+  the weight is not used but only the sign."
+  [ac bc] (make (bit-xor ac bc) (sign ac bc)))
 
 (defn outer
   "Calculate the outer product between two coordinates
-  a - bitwise representation of coordinate
-  b - bitwise representation of coordinate
-  returns a blade."
-  [a b]
-  (if (= 0 (bit-and a b)) (product a b) (make 0 0)))
+
+  ac - bitwise representation of coordinate
+  bc - bitwise representation of coordinate
+  returns a blade
+
+  The outer product is independent of the metric.
+  Hence the multiplication is always diagonal."
+  [ac bc]
+  (if (zero? (bit-and ac bc)) (product ac bc) (make 0 0.0)))
 
 (defn involute
-  "Derive the involute blade given a bitwise representation of the coordinate."
-  [x]
-  (make x (if (odd? (basis-blade-grade x)) -1 1)))
+  "make an involute blade from the coordinate."
+  [xc] (make xc (if (even? (grade xc)) +1 -1)))
 
-(defn reversed [x]
-  (let [g (basis-blade-grade x)
-        o (/ (* g (dec g)) 2)]
-    (make x (if (odd? o) -1 1))))
+(defn reversor
+  "make an reverse blade from the coordinate."
+  [xc]
+  (let [x-grade (grade xc)
+        double-grade (/ (* x-grade (dec x-grade) 2))]
+    (make xc (if (even? double-grade) +1 -1))))
 
-(defn conjugate [x]
-  (let [g (basis-blade-grade x)
-        o (/ (* g (inc g)) 2)]
-    (make x (if (odd? o) -1 1))))
+(defn conjugate
+  "make an conjugate blade from the coordinate."
+  [xc]
+  (let [x-grade (grade xc)
+        double-grade (/ (* x-grade (inc x-grade) 2))]
+    (make xc (if (even? double-grade) +1 -1))))
 
 
-(defn basis-string
-  "Calculate the name of a coordinate
-  b - bitwise representation of coordinate.
+
+(defn to-name
+  "Calculate the name of a single coordinate
+  bc - bitwise representation of coordinate.
   2r01101 => e134 "
   [basis]
   (loop [b basis, n 0, res ""]
@@ -178,8 +104,8 @@
              (if (bit-test b 0) (str res (inc n)) res)) )))
 
 
-(defn basis-bit
-  "The inverse of basis-string.
+(defn to-bitmap
+  "The inverse of to-string.
   Given a string compute the basis.
   e134 => 2r1101
   s => 2r0000 "
@@ -192,15 +118,15 @@
          w))
      0 basis-name)))
 
-(defn basis-bits
+(defn to-multi-bits
   "Given a seq of basis names build a seq of bitwise coordinates."
   [bases]
-  (map #(basis-bit %) bases))
+  (map #(to-bitmap %) bases))
 
 
-(defn basis-names
+(defn basis-multi-names
   "Sort the list of basis-coordinates into a list of basis-strings."
-  [ty] (map basis-string (sort < ty)))
+  [ty] (map to-name (sort < ty)))
 
 (defn key-check
   "Compare two lists of names"

@@ -47,6 +47,11 @@
 (ctx-ns/def-metric euclidean-metric {:round false}
   {[:no :no] 1 [:e1 :e1] 1 [:e2 :e2] 1 [:e3 :e3] 1 [:ni :ni] 1})
 
+(def metric {#{2r10000 2r00001} -1,
+             #{2r01000}  1,
+             #{2r00100}  1,
+             #{2r00010}  1})
+
 (ctx-ns/def-context ctx
   :metric conformal-metric
   :basis conformal-basis
