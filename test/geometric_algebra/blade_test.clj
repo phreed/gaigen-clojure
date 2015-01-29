@@ -1,4 +1,4 @@
-(ns geometric-algebra.generator-test
+(ns geometric-algebra.blade-test
   "Test the geometric algebra implementation"
   (:require [midje.sweet :as tt]
             [geometric-algebra.generator.basis-blade :as bb]))
@@ -38,6 +38,18 @@
   "using (2*em^e2^ep)^(e3^e2) which has no outer product"
   (bb/outer 2r10101 2r01100)
   => {:blade 0 :grade 0 :weight 0.0})
+
+ (tt/fact
+  "using (3*em^e1^e2)^(2*e3^ep)"
+  (bb/outer 2r00111 2r11000)
+  => {:blade 2r11111 :grade 5 :weight 1.0}))
+
+(tt/facts
+ "check the basis-blade names"
+
+ (tt/fact
+  "using (2*em^e2^ep)^(e3^e2) which has no outer product"
+  (bb/to-name 2r10101) => "e135")
 
  (tt/fact
   "using (3*em^e1^e2)^(2*e3^ep)"

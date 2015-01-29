@@ -8,8 +8,6 @@
 
 (defrecord BasisBlade [^int blade ^int grade ^double weight])
 
-(defrecord BasisBladeType [id coordinates title generated? dual?])
-
 (defn class-name [id] (str "_" id))
 
 (defn grade
