@@ -1,4 +1,4 @@
-(ns geometric-algebra.generator.basis-blade
+(ns geometric-algebra.generator.blade
   "The generic basis blade.
   Each term in a multivector is keyed by a
   basis blade and has a real valued magnitude."
@@ -6,7 +6,7 @@
             [core-aux.pending :as aux]
             [clojure.math.combinatorics :as combo]))
 
-(defrecord BasisBlade [^int blade ^int grade ^double weight])
+(defrecord Blade [^int blade ^int grade ^double weight])
 
 (defn class-name [id] (str "_" id))
 
@@ -23,7 +23,7 @@
 
   bc - bitwise representation of coordinate
   wt - scale factor"
-  [bc wt] (->BasisBlade bc (grade bc) wt))
+  [bc wt] (->Blade bc (grade bc) wt))
 
 (defn sign
   "This function computes the sign change
@@ -72,7 +72,7 @@
   "make an involute blade from the coordinate."
   [xc] (make xc (if (even? (grade xc)) +1 -1)))
 
-(defn reversor
+(defn re-verse
   "make an reverse blade from the coordinate."
   [xc]
   (let [x-grade (grade xc)
@@ -91,7 +91,8 @@
 (defn to-name
   "Calculate the name of a single coordinate
   bc - bitwise representation of coordinate.
-  2r01101 => e134 "
+  2r01101 => e134
+  (see space.js::basisString)"
   [basis]
   (loop [b basis, n 0, res ""]
     (if (> 1 b)
@@ -106,7 +107,8 @@
   "The inverse of to-string.
   Given a string compute the basis.
   e134 => 2r1101
-  s => 2r0000 "
+  s => 2r0000
+  (see space.js::basisBit)"
   [basis-name]
   (if (= "s" basis-name) 0
     (reduce
@@ -117,13 +119,15 @@
      0 basis-name)))
 
 (defn to-multi-bits
-  "Given a seq of basis names build a seq of bitwise coordinates."
+  "Given a seq of basis names build a seq of bitwise coordinates.
+  (see space.js::basisBits)"
   [bases]
   (map #(to-bitmap %) bases))
 
 
 (defn basis-multi-names
-  "Sort the list of basis-coordinates into a list of basis-strings."
+  "Sort the list of basis-coordinates into a list of basis-strings.
+  (see space.js::basisNames)"
   [ty] (map to-name (sort < ty)))
 
 (defn key-check
@@ -161,17 +165,17 @@
        (map-indexed #(@writer (inc %1) "\t" %2))))))
 
 
-(defmacro versor->create
-  [name-space props]
-  `(do
-     (defn ~(symbol "i*") [~(symbol 'a) ~(symbol 'b)] )
-     (defn ~(symbol "o*") [~(symbol 'a) ~(symbol 'b)] )
-     (defn ~(symbol "t*") [~(symbol 'a) ~(symbol 'b)] )
-     (defn ~(symbol "dual") [~(symbol 'a)] )
-     (defn ~(symbol "pnt")
-       [~(symbol 'x) ~(symbol 'y) ~(symbol 'z)
-        ~(symbol 'no) ~(symbol 'ni) ]
-       {:e1 ~(symbol 'x) :e2 ~(symbol 'y) :e3 ~(symbol 'z) :e4 ~(symbol 'no) :e5 ~(symbol 'ni)})
-     ))
+;; (defmacro versor->create
+;;   [name-space props]
+;;   `(do
+;;      (defn ~(symbol "i*") [~(symbol 'a) ~(symbol 'b)] )
+;;      (defn ~(symbol "o*") [~(symbol 'a) ~(symbol 'b)] )
+;;      (defn ~(symbol "t*") [~(symbol 'a) ~(symbol 'b)] )
+;;      (defn ~(symbol "dual") [~(symbol 'a)] )
+;;      (defn ~(symbol "pnt")
+;;        [~(symbol 'x) ~(symbol 'y) ~(symbol 'z)
+;;         ~(symbol 'no) ~(symbol 'ni) ]
+;;        {:e1 ~(symbol 'x) :e2 ~(symbol 'y) :e3 ~(symbol 'z) :e4 ~(symbol 'no) :e5 ~(symbol 'ni)})
+;;      ))
 
 

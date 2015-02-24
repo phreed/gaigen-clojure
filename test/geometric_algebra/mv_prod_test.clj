@@ -3,7 +3,7 @@
   (:require [midje.sweet :as tt]
             [geometric-algebra.generator
              [space :as ga]
-             [basis-blade :as bb]]))
+             [blade :as bb]]))
 
 
 (def c3

@@ -3,7 +3,7 @@
   (:require [midje.sweet :as tt]
             [geometric-algebra.generator
              [space :as ga]
-             [basis-blade :as bb]]))
+             [blade :as bb]]))
 
 (tt/facts
  "check the basis building"
@@ -20,13 +20,22 @@
       7])    ; grade 3
 
  (tt/fact
-  "using conformal metric"
+  "using 5 dimensional metric with a minkowski basis"
   (ga/build-basis [1 1 1 1 -1])
-  => [ 1  2  4  8 16                ; grade 1
-       3  5  6  9 10 12 17 18 20 24 ; grade 2
-       7 11 13 14 19 21 22 25 26 28 ; grade 3
-      15 23 27 29 30                ; grade 4
-      31]))                         ; grade 5
+  => [; grade 0 = the scalar
+      2r00000
+      ; grade 1 = vectors
+      2r00001 2r00010 2r00100 2r01000 2r10000
+      ; grade 2 = bivector
+      2r00011 2r00101 2r00110 2r01001 2r01010 2r01100
+      2r10001 2r10010 2r10100 2r11000
+      ; grade 3 = trivector
+      2r00111 2r01011 2r01101 2r01110
+      2r10011 2r10101 2r10110 2r11001 2r11010 2r11100
+      ; grade 4 = quadvector
+      2r01111 2r10111 2r11011 2r11101 2r11110
+      ; grade 5 = the psuedoscalar
+      2r11111 ]))
 
 (tt/facts
  "check the multivector-key generation"
@@ -76,15 +85,15 @@
   (ga/make-type (ga/key-bit basis single)
                 [single]
                 (bb/to-name single))
-  => {:basis [2], :dual? false, :gened? false,
+  => {:basis [2], :dual? false, :generated?? false,
       :llave [4], :nombre "e2"})
 
  (tt/fact
   "using conformal metric to generate types."
   (ga/build-basic-types basis)
-  => {"e1" {:basis [1] :dual? false :gened? false :llave [2] :nombre "e1"}
-      "e2" {:basis [2] :dual? false :gened? false :llave [4] :nombre "e2"}
-      "e12" {:basis [3] :dual? false :gened? false :llave [8] :nombre "e12"}})
+  => {"e1" {:basis [1] :dual? false :generated?? false :llave [2] :nombre "e1"}
+      "e2" {:basis [2] :dual? false :generated?? false :llave [4] :nombre "e2"}
+      "e12" {:basis [3] :dual? false :generated?? false :llave [8] :nombre "e12"}})
 
 
  (tt/fact

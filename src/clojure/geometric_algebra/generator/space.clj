@@ -2,10 +2,10 @@
   "Representation of a GA space. "
   (:require [geometric-algebra.generator
              [context :as ctx]
-             [basis-blade :as bb]]
+             [blade :as bb]]
             [clojure.math.combinatorics :as combo]))
 
-(defrecord SpaceType [llave basis nombre gened? dual?])
+(defrecord SpaceType [llave basis nombre generated?? dual?])
 
 (defn make-type
   "Data structure representing a space type
@@ -90,7 +90,7 @@
   (let [llave (get type-spec :llave nil)
         coords (bb/to-name (get type-spec :basis nil))
         nombre (get type-spec :nombre nil)
-        gened? (get type-spec :gened?)
+        generated?? (get type-spec :generated??)
         dual? (get type-spec :dual?)
 
         get-field (mapv #(identity %) coords)
@@ -140,7 +140,7 @@
 
 (defn generate-api
   "Generate the functions for the various types.
-  [ref: versor.js: generate]"
+  [ref: versor.js:generate]"
   [binops type-specs]
   (let [binop-code (generate-binops binops)
         type-code (generate-registered-types binops)
@@ -155,6 +155,12 @@
                        (not= tn (:alias ty)) false
                        :else true)))
                                type-code))) ]
+
+
+    (loop [function-body {:classes {}, :constructors {}},
+           tname (first type-code), tname-rest (rest type-code)]
+          (if (contains? type-code-aliases tname)
+            (let [fb [(get type-code tname)
 
 
   ))
@@ -204,7 +210,7 @@
 (defn blade-table
   "
   [ref: versor.js: bladeTable]"
-  [basics]
+  [basez]
   (into {}
         (map #([basis {:id (bb/to-name %), :basis %,
                        :gp {}, :op {}, :ip {}}])

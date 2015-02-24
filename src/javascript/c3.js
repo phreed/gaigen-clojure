@@ -1,4 +1,4 @@
-var C3 = versor.create({
+var C3 = space.create({
 	metric:[1, 1, 1, 1, -1],
 	types: [
 		{ name:"Vec3", bases:["e1", "e2", "e3"] },
@@ -37,7 +37,7 @@ var sinh = function(v) {
 }
 
 
-
+C3;
 C3.Ori = C3.e4(1);
 C3.Inf = C3.e5(1);
 

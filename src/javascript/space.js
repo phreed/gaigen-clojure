@@ -1,4 +1,4 @@
-var versor = function() {
+var space = function() {
 
 var foreach = function(t, f) {
 	for(var i=0; i < t.length; ++i) f(t[i], i);
@@ -192,16 +192,193 @@ var printLines = function(text, from, to) {
 }
 
 
-/*	Representation of a GA space
+/*
+Representation of a GA space
+Given a set of properties:
+e.g.
+ {metric:[1, 1, 1, 1, -1],
+	types: [
+		{ name:"Vec3", bases:["e1", "e2", "e3"] },
+		{ name:"Biv3", bases:["e12", "e13", "e23"] },
+		{ name:"Tri3", bases:["e123"] },
+		{ name:"Pss", bases:["e12345"] },
+		{ name:"Rot", bases:["s", "e12", "e13", "e23"] },
+		{ name:"Pnt", bases:["e1", "e2", "e3", "e4", "e5"], dual:true },
+	],
+	conformal:true}
+
+produces this:
+
+ metric(Array): [1 1 1 1 -1]
+ basis(Array): <all permutations of 5 bits keyed by sorted grade>
+ initialized: true
+
+<spaces>
+ subspaces(Array):
+   0: <grade 1>
+     name: "Vec"
+     bases: [2r00001 2r00010 2r00100 2r01000 2r10000]
+   1: <grade 2>
+     name: "Biv"
+     bases: [2r00011 ... 2r11000]
+   ...
+   4: <grade 5>
+     name: "Penta"
+     bases: [2r11111]
+
+ types(Object):
+   Biv:
+     alias: "Par"
+     dual: true
+     generated: true
+     name: "Biv"
+     bases(Array): [<all grade 2 blades>]
+       3 : 2r00011
+       5 : 2r00101
+       6 : 2r00110
+       9 : 2r01001
+       10: 2r01010
+       12: 2r01100
+       17: 2r10001
+       18: 2r10010
+       20: 2r10100
+       24: 2r11000
+     key(Bits): <each blade is assigned a bit>
+       2r 001 000 100 100 001 011 001 101 000
+
+ values(Object):
+   em: 2r10000
+   ep: 2r01000
+   eplane: 2r11000
+   ni: 2r10000
+   no: 2r01000
+
+
+<std types>
+ Vec: function (e1, e2, ..., e5) {
+        return new _Vec(e1, e2, ..., e5); }
+ Biv: function (e12, e13, ..., e45) {
+        return new _Biv(e12, e13, ..., e45); }
+
+<custom types>
+ Vec3: function (e1, e2, e3) {
+        return new _Vec3(e12, e13, e23); }
+ Biv3: function (e12, e13, e23) {
+        return new _Biv3(e12, e13, e23); }
+ Pnt: function (e1, e2, e3, e4, e5) {
+        return new _Vec(e1, e2, e3, e4, e5); }
+
+<std operators>
+ Ori: _e4 :: 0: 1, type: "e5"
+ Inf: _e5 :: 0: 1, type: "e5"
+   [add: cast: gp: ip: op: sub: conjucate: constructor:
+    div: inverse: involute: isdual: re: reverse:
+    toArray: toString: ]
+
+ Dr(Object):
+   elem: function(d) { return C3.Ori.ip(d.involute());}
+
+ Fl(Object):
+   dir: function(a) { return a.isdual() ? C3.e5(1).op(a) : C3.e5(-1).ip(a); }
+   line: function(p1,p2) { return p1.op(p2.op(C3.Inf); }
+   loc: function(a,p) { if (a.isdual())
+                             return C3.Pnt(p.op(a).div(a));
+                        else return C3.Pnt(p.ip(a).div(a));
+   plane: function(pos,drv) { return C3.dual(pos.ip(drv)); }
+
+ Gen(Object):
+   dil: function (amt) { return C3.Dil(cosh(amt*0.5), sinh(amt*0.5)); }
+   log: function (m) { <complex> }
+   mot: function (dll) { <complex> }
+   ratio: function (a,b,t) { <complex> }
+   ratioDll: function (a,b,t) { <complex> }
+   rot: function (b) { <complex> }
+
+ Op(Object):
+   bst: function(pp) { <complex boost> }
+   pj: function(a,b) { return C3[a.type](a.ip(b).div(b)); }
+   rj: function(a,b) { return a.op(b).div(b); }
+   trs: function(x,y,z) { return C3.Trs(1, -0.5*x, -0.5*y, -0.58z); }
+
+ Ro(Object):
+   car: function(a) { return a.op(C3.Inf); }
+   cen: function(a) { <complex boost> }
+   circle: function(cen,dir,r) { <complex boost> }
+   dls: function(x,y,z,r) { <complex boost> }
+   dst: function(a,b) { <complex boost> }
+   ipoint: function(x,y,z) { <complex boost> }
+   loc: function(a) { <complex boost> }
+   point: function(x,y,z) { <complex boost> }
+   radius: function(a) { <complex boost> }
+   size: function(a) { <complex boost> }
+   split: function(pp) { <complex boost> }
+   sqd: function(a,b) { <complex boost> }
+
+ Ta(Object):
+   dir: function(el) { return C3.Inf.ip(el).op(C3.Inf); }
+   loc: function(el) { return C3.Vec(el.div(C3.e5(-1).ip(el))); }
+
+
+ api(Object):
+   classes(Object):
+     Biv: function(e12, e13, ..., e45) {
+            this.type = "Biv";
+            if (typeof e12 == "object")
+                 this.cast(e12);
+            else { this[0] = e12; ...; this[9] = e45; } }
+     e1: function(e1) {
+            this.type = "e1";
+            if (typeof e1 == "object") this.cast(e1); else { this[0] = e1; } }
+   constructors(Object):
+     Biv: function(e12, e13, ..., e45) { return new _Biv(e12, e13,...,e45); }
+     e12: function(e12) { return new _e12(e12); }
+
+
+ s: function(el) { return new _s(el); }
+ e1: function (el) { return new _e1(el));
+ e12: function (el) { return new _e12(el));
+
+ dot: function (el) { return el.ip(el));
+ dual: function (el) { return el.gp(C3.Pss(-1));
+ duale: function (el) { return el.gp(C3.Tri(-1));
+
+
+ mag: function(el) { return Math.sqrt(Math.abs(C3.wt(el))); }
+ norm: function(el) { var a = C3.rwt(el); if (a<0) return 0; return Math.sqrt(a); }
+ rdot: function(el) { return el.ip(el.reverse()); }
+ rnorm: function(el) { return <stuff>; }
+ runit: function(el) { return <stuff>; }
+ rwt: function(el) { return <stuff>; }
+ uduale: function(el) { return <stuff>; }
+ udual: function(el) { return <stuff>; }
+ unit: function(el) { return <stuff>; }
+ wt: function(el) { return C3.dot(el, el)[0]; }
+
+ products(Object): [a map of precooked blade products]
+   <key>:
+      basis: <key> e.g. 2r01100 = 12
+      id: <name> e.g. "e34"
+      conjugate(Object): id: 0, w: 1
+      involute(object): id: 12, w: 1
+      reverse(object): id: 12, w: -1
+      gp(Object): 0: [id: 12, w: 1], 1: [id: 13, w 1], ...,
+                  16: [id: 4, w: -1][id: 28, w: 1], ...
+      ip(Object): 20: [id: 0, w: 1], 21: [id: 1, w: 1], ...
+      op(Object): 2: [id: 14, w: 1], ...
+
+
 */
 var Space = function(props) {
+  // set some defaults
 	props = props || {};
 	props.metric = props.metric || [1, 1, 1];
 	props.types = props.types || [];
 	props.binops = props.binops || [];
 
 	this.metric = props.metric;
+  // the basis is a generated vector of bitmaps
 	this.basis = this.buildBasis();
+
 	this.types = this.buildTypes();
 	if(props.conformal) {
 		this.values = this.buildConformalValues();
@@ -221,6 +398,15 @@ var Space = function(props) {
 	this.initialized = true;
 }
 
+/*
+  Generates a function body based on the props
+
+  var aip = { classes:{}, constructors:{} };
+  code
+  api.constructors.<name> = "<name>";
+  api.classes.<name> = "_<name>";
+
+  */
 Space.prototype.generate = function(props) {
 	var binopCode = this.generateBinops(props.binops);
 	var typeCode = this.generateRegisteredTypes();
@@ -350,6 +536,10 @@ Space.prototype.buildBasis = function() {
 	return basis;
 }
 
+/*
+Given a set of basis names
+construct a type for each basis.
+*/
 Space.prototype.buildTypes = function() {
 	var types = {};
 	for(var i=0; i < this.basis.length; ++i) {
@@ -629,6 +819,12 @@ Space.prototype.productList = function(bases1, bases2, opname) {
 	return order(combined);
 }
 
+/*
+  Given a name 'foo' produces a string
+  containing code.
+
+  var
+*/
 Space.prototype.generateType = function(name) {
 	var ty = this.types[name];
 	var coords = basisNames(ty.bases);

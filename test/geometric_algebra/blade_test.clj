@@ -1,7 +1,8 @@
 (ns geometric-algebra.blade-test
   "Test the geometric algebra implementation"
   (:require [midje.sweet :as tt]
-            [geometric-algebra.generator.basis-blade :as bb]))
+            [geometric-algebra.generator
+             [blade :as bb]]))
 
 
 (tt/facts
