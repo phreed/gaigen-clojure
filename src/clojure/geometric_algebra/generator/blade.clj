@@ -1,7 +1,9 @@
 (ns geometric-algebra.generator.blade
   "The generic basis blade.
   Each term in a multivector is keyed by a
-  basis blade and has a real valued magnitude."
+  basis blade and has a real valued magnitude.
+  (see 'geometric-algebra/blade_test.clg' for
+    test guided development"
   (:require [geometric-algebra.generator.context :as ctx]
             [core-aux.pending :as aux]
             [clojure.math.combinatorics :as combo]))

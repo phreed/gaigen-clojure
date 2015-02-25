@@ -127,43 +127,43 @@
   )
 
 (defn generate-binop
-  "Call Stack:
-  generate-type"
-  []
-  )
+  "Generate a binary operation
+  specific for a pair of types.
+  e.g. geometric-product of a vector and a bivector.
+  (see versor.js::generateBinop)"
+  [opname type-name1 type-name2]
+  :unimplemented )
 
-(defn generate-binops
-  "Call Stack:
-  generate-binop"
-  []
-  )
-
-(defn generate-api
+(defmacro generate-api
   "Generate the functions for the various types.
-  [ref: versor.js:generate]"
+  [ref: versor.js:generate]
+  "
   [binops type-specs]
-  (let [binop-code (generate-binops binops)
-        type-code (generate-registered-types binops)
-        type-code-aliases
-        (into
-         {} (map #([% (type-code %)])
-                 (filter
-                  (fn [tn]
-                    (let [ty (get type-specs tn {})]
-                      (cond
-                       (complement contains? ty :alias) false
-                       (not= tn (:alias ty)) false
-                       :else true)))
-                               type-code))) ]
+  nil)
+
+;;   #_(let [binop-code (for [{op :op, [type1 type2] :types} binops]
+;;                      (generate-binop op type1 type2))
+;;         type-code (generate-registered-types binops)
+;;         type-code-aliases
+;;         (into
+;;          {} (map #([% (type-code %)])
+;;                  (filter
+;;                   (fn [tn]
+;;                     (let [ty (get type-specs tn {})]
+;;                       (cond
+;;                        (complement contains? ty :alias) false
+;;                        (not= tn (:alias ty)) false
+;;                        :else true)))
+;;                                type-code))) ]
 
 
-    (loop [function-body {:classes {}, :constructors {}},
-           tname (first type-code), tname-rest (rest type-code)]
-          (if (contains? type-code-aliases tname)
-            (let [fb [(get type-code tname)
+;;     (loop [function-body {:classes {}, :constructors {}},
+;;            tname (first type-code), tname-rest (rest type-code)]
+;;           (if (contains? type-code-aliases tname)
+;;             (let [fb [(get type-code tname)]
 
 
-  ))
+;;   )
 
 
 (defn create-spec-types
@@ -211,10 +211,11 @@
   "
   [ref: versor.js: bladeTable]"
   [basez]
-  (into {}
-        (map #([basis {:id (bb/to-name %), :basis %,
-                       :gp {}, :op {}, :ip {}}])
-             basics)))
+  (into
+   {}
+   (map #([% {:id (bb/to-name %), :basis %,
+              :gp {}, :op {}, :ip {}}])
+        basez)))
 
 
 (defn build-conformal-binop
@@ -227,7 +228,13 @@
   "Build the conformal tranlations.
   [ref: versor.js: buildConformal]"
   [metric]
-  )
+  :not-implemented )
+
+(defn build-euclidean
+  "Build the euclidean space tranlations.
+  [ref: versor.js::Space.prototype.buildEuclidean]"
+  [metric]
+  :not-implemented )
 
 (defn populate-subspaces
   "Identify the active subspaces and populate them.

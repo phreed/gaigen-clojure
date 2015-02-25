@@ -17,7 +17,8 @@
      :dependencies [[midje "1.6.3"]]
      :plugins [[lein-autoexpect "1.2.2"]
                [lein-ancient "0.5.5"]
-               [lein-midje "3.1.1"] ] }
+               [lein-midje "3.1.1"]
+               [lein-gorilla "0.3.4"] ] }
 
     :uberjar
     {:aot :all} })

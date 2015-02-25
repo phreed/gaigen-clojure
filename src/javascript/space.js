@@ -213,20 +213,8 @@ produces this:
  basis(Array): <all permutations of 5 bits keyed by sorted grade>
  initialized: true
 
-<spaces>
- subspaces(Array):
-   0: <grade 1>
-     name: "Vec"
-     bases: [2r00001 2r00010 2r00100 2r01000 2r10000]
-   1: <grade 2>
-     name: "Biv"
-     bases: [2r00011 ... 2r11000]
-   ...
-   4: <grade 5>
-     name: "Penta"
-     bases: [2r11111]
-
  types(Object):
+   <for each type>
    Biv:
      alias: "Par"
      dual: true
@@ -244,14 +232,41 @@ produces this:
        20: 2r10100
        24: 2r11000
      key(Bits): <each blade is assigned a bit>
-       2r 001 000 100 100 001 011 001 101 000
+       2r 001 000 100 110 001 011 001 101 000
+           24    20   17   12   9   6 5 3
+                     18       10
 
- values(Object):
+ values(Object): <these are the conformal values>
    em: 2r10000
    ep: 2r01000
    eplane: 2r11000
    ni: 2r10000
    no: 2r01000
+
+
+ products(Object): [a map of precooked blade products]
+   <key>:
+      basis: <key> e.g. 2r01100 = 12
+      id: <name> e.g. "e34"
+      conjugate(Object): id: 0, w: 1
+      involute(object): id: 12, w: 1
+      reverse(object): id: 12, w: -1
+      gp(Object): 0: [id: 12, w: 1], 1: [id: 13, w 1], ...,
+                  16: [id: 4, w: -1][id: 28, w: 1], ...
+      ip(Object): 20: [id: 0, w: 1], 21: [id: 1, w: 1], ...
+      op(Object): 2: [id: 14, w: 1], ...
+
+ subspaces(Array):
+   0: <grade 1>
+     name: "Vec"
+     bases: [2r00001 2r00010 2r00100 2r01000 2r10000]
+   1: <grade 2>
+     name: "Biv"
+     bases: [2r00011 ... 2r11000]
+   ...
+   4: <grade 5>
+     name: "Penta"
+     bases: [2r11111]
 
 
 <std types>
@@ -260,64 +275,13 @@ produces this:
  Biv: function (e12, e13, ..., e45) {
         return new _Biv(e12, e13, ..., e45); }
 
-<custom types>
+<additional types>
  Vec3: function (e1, e2, e3) {
         return new _Vec3(e12, e13, e23); }
  Biv3: function (e12, e13, e23) {
         return new _Biv3(e12, e13, e23); }
  Pnt: function (e1, e2, e3, e4, e5) {
         return new _Vec(e1, e2, e3, e4, e5); }
-
-<std operators>
- Ori: _e4 :: 0: 1, type: "e5"
- Inf: _e5 :: 0: 1, type: "e5"
-   [add: cast: gp: ip: op: sub: conjucate: constructor:
-    div: inverse: involute: isdual: re: reverse:
-    toArray: toString: ]
-
- Dr(Object):
-   elem: function(d) { return C3.Ori.ip(d.involute());}
-
- Fl(Object):
-   dir: function(a) { return a.isdual() ? C3.e5(1).op(a) : C3.e5(-1).ip(a); }
-   line: function(p1,p2) { return p1.op(p2.op(C3.Inf); }
-   loc: function(a,p) { if (a.isdual())
-                             return C3.Pnt(p.op(a).div(a));
-                        else return C3.Pnt(p.ip(a).div(a));
-   plane: function(pos,drv) { return C3.dual(pos.ip(drv)); }
-
- Gen(Object):
-   dil: function (amt) { return C3.Dil(cosh(amt*0.5), sinh(amt*0.5)); }
-   log: function (m) { <complex> }
-   mot: function (dll) { <complex> }
-   ratio: function (a,b,t) { <complex> }
-   ratioDll: function (a,b,t) { <complex> }
-   rot: function (b) { <complex> }
-
- Op(Object):
-   bst: function(pp) { <complex boost> }
-   pj: function(a,b) { return C3[a.type](a.ip(b).div(b)); }
-   rj: function(a,b) { return a.op(b).div(b); }
-   trs: function(x,y,z) { return C3.Trs(1, -0.5*x, -0.5*y, -0.58z); }
-
- Ro(Object):
-   car: function(a) { return a.op(C3.Inf); }
-   cen: function(a) { <complex boost> }
-   circle: function(cen,dir,r) { <complex boost> }
-   dls: function(x,y,z,r) { <complex boost> }
-   dst: function(a,b) { <complex boost> }
-   ipoint: function(x,y,z) { <complex boost> }
-   loc: function(a) { <complex boost> }
-   point: function(x,y,z) { <complex boost> }
-   radius: function(a) { <complex boost> }
-   size: function(a) { <complex boost> }
-   split: function(pp) { <complex boost> }
-   sqd: function(a,b) { <complex boost> }
-
- Ta(Object):
-   dir: function(el) { return C3.Inf.ip(el).op(C3.Inf); }
-   loc: function(el) { return C3.Vec(el.div(C3.e5(-1).ip(el))); }
-
 
  api(Object):
    classes(Object):
@@ -337,35 +301,7 @@ produces this:
  s: function(el) { return new _s(el); }
  e1: function (el) { return new _e1(el));
  e12: function (el) { return new _e12(el));
-
- dot: function (el) { return el.ip(el));
- dual: function (el) { return el.gp(C3.Pss(-1));
- duale: function (el) { return el.gp(C3.Tri(-1));
-
-
- mag: function(el) { return Math.sqrt(Math.abs(C3.wt(el))); }
- norm: function(el) { var a = C3.rwt(el); if (a<0) return 0; return Math.sqrt(a); }
- rdot: function(el) { return el.ip(el.reverse()); }
- rnorm: function(el) { return <stuff>; }
- runit: function(el) { return <stuff>; }
- rwt: function(el) { return <stuff>; }
- uduale: function(el) { return <stuff>; }
- udual: function(el) { return <stuff>; }
- unit: function(el) { return <stuff>; }
- wt: function(el) { return C3.dot(el, el)[0]; }
-
- products(Object): [a map of precooked blade products]
-   <key>:
-      basis: <key> e.g. 2r01100 = 12
-      id: <name> e.g. "e34"
-      conjugate(Object): id: 0, w: 1
-      involute(object): id: 12, w: 1
-      reverse(object): id: 12, w: -1
-      gp(Object): 0: [id: 12, w: 1], 1: [id: 13, w 1], ...,
-                  16: [id: 4, w: -1][id: 28, w: 1], ...
-      ip(Object): 20: [id: 0, w: 1], 21: [id: 1, w: 1], ...
-      op(Object): 2: [id: 14, w: 1], ...
-
+ ...
 
 */
 var Space = function(props) {
@@ -401,7 +337,7 @@ var Space = function(props) {
 /*
   Generates a function body based on the props
 
-  var aip = { classes:{}, constructors:{} };
+  var api = { classes:{}, constructors:{} };
   code
   api.constructors.<name> = "<name>";
   api.classes.<name> = "_<name>";
@@ -498,7 +434,9 @@ Space.prototype.basesKey = function(bases) {
 	return key;
 }
 
-/*	Construct the bitwise representation for the coordinate basis
+/*
+  Construct the bitwise representation for the coordinate basis.
+
 */
 Space.prototype.buildBasis = function() {
 	// initialize with the scalar
@@ -513,7 +451,8 @@ Space.prototype.buildBasis = function() {
 		nb <<= 1;
 	}
 
-	// build the bivectors (e12, e23, ...)
+	// build the blades of grade higher than 1
+  // (e12, e23, ..., e134, ..., e12345)
 	for(var i=0; i < basis.length; ++i) {
 		for(var j=0; j < basis.length; ++j) {
 			if(i!=j) {
