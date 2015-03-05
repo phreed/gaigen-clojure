@@ -51,12 +51,23 @@
   "Calculate the product between two coordinates.
   (see geometric-algebra fig. 19.2)
   This function computes the product
-  for a diagonal basis.
+  for a diagonal metric.
   returns a blade.
 
   In order for memoization to work correctly
   the weight is not used but only the sign."
   [ac bc] (make (bit-xor ac bc) (sign ac bc)))
+
+(defn inner
+  "Calculate the inner product between two coordinates
+
+  ac - bitwise representation of coordinate
+  bc - bitwise representation of coordinate
+  returns a blade
+
+  The inner product is dependent of the metric."
+  [ac bc metric]
+  (if (zero? (bit-and ac bc)) (product ac bc) (make 0 0.0)))
 
 (defn outer
   "Calculate the outer product between two coordinates

@@ -1,0 +1,82 @@
+// Write your CLUScript here...
+DefVarsN3();
+
+b000x00 = 1;
+
+b100x00 = e1;
+b010x00 = e2;
+b001x00 = e3;
+b000x10 = ni;
+b000x01 = no;
+
+b110x00 = e1^e2;
+b101x00 = e1^e3;
+b011x00 = e2^e3;
+b100x10 = e1^ni;
+b100x01 = e1^no;
+b010x10 = e2^ni;
+b010x01 = e2^no;
+b001x10 = e3^ni;
+b001x01 = e3^no;
+b000x11 = ni ^ no;
+
+b111x00 = e1 ^ e2 ^ e3;
+b110x10 = e1 ^ e2 ^ ni;
+b110x01 = e1 ^ e2 ^ no;
+b101x10 = e1 ^ e3 ^ ni;
+b101x01 = e1 ^ e3 ^ no;
+b100x11 = e1 ^ ni ^ no;
+b011x10 = e2 ^ e3 ^ ni;
+b011x01 = e2 ^ e3 ^ no;
+b010x11 = e2 ^ ni ^ no;
+b001x11 = e3 ^ ni ^ no;
+
+b111x10 = e1^e2^e3^ni;
+b111x01 = e1^e2^e3^no;
+b110x11 = e1^e2^ni^no;
+b101x11 = e1^e3^ni^no;
+b011x11 = e2^e3^ni^no;
+
+b111x11 = e1^e2^e3^ni^no;
+
+x = b111x11;
+
+?grade = "0"
+?b000x00 = b000x00 * x;
+?grade = "1"
+?b100x00 = b100x00 * x;
+?b010x00 = b010x00 * x;
+?b001x00 = b001x00 * x;
+?b000x10 = b000x10 * x;
+?b000x01 = b000x01 * x;
+?grade = "2"
+?b110x00 = b110x00 * x;
+?b101x00 = b101x00 * x;
+?b011x00 = b011x00 * x;
+?b100x10 = b100x10 * x;
+?b100x01 = b100x01 * x;
+?b010x10 = b010x10 * x;
+?b010x01 = b010x01 * x;
+?b001x10 = b001x10 * x;
+?b001x01 = b001x01 * x;
+?b000x11 = b000x11 * x;
+?grade = "3";
+?b111x00 = b111x00 * x;
+?b110x10 = b110x10 * x;
+?b110x01 = b110x01 * x;
+?b101x10 = b101x10 * x;
+?b101x01 = b101x01 * x;
+?b100x11 = b100x11 * x;
+?b011x10 = b011x10 * x;
+?b011x01 = b011x01 * x;
+?b010x11 = b010x11 * x;
+?b001x11 = b001x11 * x;
+?grade = "4";
+?b111x10 = b111x10 * x;
+?b111x01 = b111x01 * x;
+?b110x11 = b110x11 * x;
+?b101x11 = b101x11 * x;
+?b011x11 = b011x11 * x;
+?grade = "5";
+?b111x11 = b111x11 * x;
+

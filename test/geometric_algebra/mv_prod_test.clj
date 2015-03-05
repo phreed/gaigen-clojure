@@ -6,7 +6,7 @@
              [blade :as bb]]))
 
 
-(def c3
+#_(def c3
   (ga/make-space
    { :metric [1 1 1 1 -1]
      :binops []
@@ -41,9 +41,9 @@
        sca2 -7
        vect ()]
 
- (tt/fact
-  "using basis-count to get the basis size"
-  (ga/ [1 1 1]) => 8)
+ ;(tt/fact
+ ; "using basis-count to get the basis size"
+ ; (ga/ [1 1 1]) => 8)
 
  (tt/fact
   "using euclidean metric"
@@ -60,4 +60,5 @@
        7 11 13 14 19 21 22 25 26 28 ; grade 3
       15 23 27 29 30                ; grade 4
       31]))                         ; grade 5
+ )
 

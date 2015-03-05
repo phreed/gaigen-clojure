@@ -217,6 +217,15 @@
               :gp {}, :op {}, :ip {}}])
         basez)))
 
+(defn blade-prod
+  "Produces the geometric product for any two
+  blades in the metric space."
+  [ba bb]
+
+  )
+
+
+
 
 (defn build-conformal-binop
   "
