@@ -59,20 +59,24 @@
   "build a lookup array where the index is a function
   of the bitmaps of the blade keys."
   [tab]
-  (let [kn2s (:key-bits tab)]
-    (for [kix (range (count kn2s))
+  (let [kbs (:key-bits tab)
+        kns (:key-name tab)
+        look (into {} (map #(vector %1 %2) kns kbs))]
+    (for [kix (range (count kns))
           row (:product tab)]
       (let [prods (subvec row 2)
             kn1 (first row)
-            cell (get prods kix)
-            kn2 (get kn2s kix)]
+            kn2 (get kbs kix)
+            cell (mapv #(let [[sign kn] %] [sign (get look kn)]) (get prods kix)) ]
         [(+ (bit-shift-left kn1 5)  kn2) cell]))))
 
-; (def prod-name-lookup
-;   (into
-;    {}
-   (make-bitmask-lookup
-    product-table) ;))
+(def prod-bitkey-lookup
+  (as->
+   (make-bitmask-lookup product-table) $
+   (sort-by first $)
+   (map #(let [[bitkey payload] %] payload) $)
+   (vec $) ))
+
 
 (def prod-keymask-lookup {})
 
