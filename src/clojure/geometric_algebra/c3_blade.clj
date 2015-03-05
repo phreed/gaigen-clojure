@@ -40,7 +40,7 @@
 ]})
 
 
-(defn make-lookup
+(defn make-name-lookup
   "build a lookup table where the keys are tuples of the blade keys."
   [tab]
   (let [kn2s (:key-name tab)]
@@ -52,15 +52,35 @@
             kn2 (get kn2s kix)]
         [[kn1 kn2] cell]))))
 
-(def prod-lookup
-  (into
-   {}
-   (make-lookup
-    product-table)))
+(def prod-name-lookup (into {} (make-name-lookup product-table)))
 
 
-(def prod
+(defn make-bitmask-lookup
+  "build a lookup array where the index is a function
+  of the bitmaps of the blade keys."
+  [tab]
+  (let [kn2s (:key-bits tab)]
+    (for [kix (range (count kn2s))
+          row (:product tab)]
+      (let [prods (subvec row 2)
+            kn1 (first row)
+            cell (get prods kix)
+            kn2 (get kn2s kix)]
+        [(+ (bit-shift-left kn1 5)  kn2) cell]))))
+
+; (def prod-name-lookup
+;   (into
+;    {}
+   (make-bitmask-lookup
+    product-table) ;))
+
+(def prod-keymask-lookup {})
+
+
+(defn product
   "compute the product of two blades"
   [b1 b2]
-  (for [bits1 (:bitmap b1)
-        bits2 (:bitmap b2)]
+  (let [bm1 (:bitmap b1)
+        bm2 (:bitmap b2)]
+    (get prod-keymask-lookup [bm1 bm2])))
+
