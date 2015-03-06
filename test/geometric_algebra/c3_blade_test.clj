@@ -12,17 +12,17 @@
 
  (tt/fact
   "e1 * e2 => e12"
-  (get c3bl/prod-bitkey-lookup 2r0000100010) => [[1 2r00011]])
+  (c3bl/prod-bitkey 2r00001 2r00010) => [[1 2r00011]])
 
  (tt/fact
   "e2 * e1 => -e12"
-  (get c3bl/prod-bitkey-lookup 2r0001000001) => [[-1 2r00011]])
+  (c3bl/prod-bitkey 2r00010 2r00001) => [[-1 2r00011]])
 
  (tt/fact
   "ni * ni => 0"
-  (get c3bl/prod-bitkey-lookup 2r0100001000) => [])
+  (c3bl/prod-bitkey 2r01000 2r01000) => [])
 
  (tt/fact
   "no * ni => -1"
-  (get c3bl/prod-bitkey-lookup 2r0100010000) => [[-1 2r00000] [+1 2r11000] ])
+  (c3bl/prod-bitkey 2r01000 2r10000) => [[-1 2r00000] [+1 2r11000] ])
  )

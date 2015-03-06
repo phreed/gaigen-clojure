@@ -55,7 +55,7 @@
 (def prod-name-lookup (into {} (make-name-lookup product-table)))
 
 
-(defn make-bitmask-lookup
+(defn make-bitkey-lookup
   "build a lookup array where the index is a function
   of the bitmaps of the blade keys."
   [tab]
@@ -72,13 +72,16 @@
 
 (def prod-bitkey-lookup
   (as->
-   (make-bitmask-lookup product-table) $
+   (make-bitkey-lookup product-table) $
    (sort-by first $)
    (map #(let [[bitkey payload] %] payload) $)
    (vec $) ))
 
 
-(def prod-keymask-lookup {})
+(defn prod-bitkey
+  "given two bit-keys find their product"
+  [bk1 bk2]
+  (get prod-bitkey-lookup (+ (bit-shift-left bk1 5) bk2)))
 
 
 (defn product
