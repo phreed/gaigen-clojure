@@ -128,6 +128,7 @@
 
 
 (defn make-bitmap-lookup
+
   "build a lookup array where the index is a function
   of the bitmaps of the blade keys."
   [tab]
@@ -141,6 +142,7 @@
             kn2 (get kbs kix)
             cell (mapv #(let [[sign kn] %] [sign (get look kn)]) (get prods kix)) ]
         [(+ (bit-shift-left kn1 5)  kn2) cell]))))
+
 
 (let [lookup
       (->> (make-bitmap-lookup product-table)
