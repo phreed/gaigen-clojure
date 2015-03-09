@@ -1,8 +1,7 @@
 (ns geometric-algebra.generator.space
   "Representation of a GA space. "
-  (:require [geometric-algebra.generator
-             [context :as ctx]
-             [blade :as bb]]
+  (:require [geometric-algebra.generator [context :as ctx]]
+            [geometric-algebra [blade :as bb]]
             [clojure.math.combinatorics :as combo]))
 
 (defrecord SpaceType [llave basis nombre generated?? dual?])

@@ -1,9 +1,8 @@
 (ns geometric-algebra.mv-prod-test
   "Test the geometric algebra implementation"
   (:require [midje.sweet :as tt]
-            [geometric-algebra.generator
-             [space :as ga]
-             [blade :as bb]]))
+            [geometric-algebra.generator [space :as ga]]
+            [geometric-algebra [blade :as bb]]))
 
 
 #_(def c3

@@ -8,7 +8,7 @@
             [core-aux.pending :as aux]
             [clojure.math.combinatorics :as combo]))
 
-(defrecord Blade [^int bitkey ^int grade ^double weight])
+(defrecord Blade [^int bitmap ^int grade ^double weight])
 
 (defn class-name [id] (str "_" id))
 
@@ -25,7 +25,7 @@
 
   llave - bitwise representation of coordinate
   wt - scale factor"
-  [bitkey wt] (->Blade bitkey (grade bitkey) wt))
+  [bitmap wt] (->Blade bitmap (grade bitmap) wt))
 
 (defn sign
   "This function computes the sign change

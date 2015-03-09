@@ -20,3 +20,9 @@
   The inner product is dependent of the metric."
   [ac bc metric]
   (if (zero? (bit-and ac bc)) (product ac bc) (make 0 0.0)))
+
+
+(defn parse
+  "parse a map representing a multivector keyed
+  with labels (aliases) into a map keyed with bitmaps."
+  [mv] (into {} (map (fn [[v k]] (vector (c3bl/bitmap<-alias k) v)) mv)))
