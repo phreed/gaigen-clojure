@@ -6,13 +6,29 @@
              [c3-space :as c3sp]]))
 
 (tt/facts
- "check the naming"
+ "check the product"
 
- (tt/fact
-  "convert bit representation to text."
-  (c3bl/bitmap->label 2r01010) => :010x10)
+ (let [a-pnt {:terms (c3sp/parse {:s 1, :e2 6, :ni 18})}
+       b-pnt {:terms (c3sp/parse {:s 1, :e2 -1, :ni 2})}]
 
- (tt/fact
-  "convert text representation to bits."
-  (c3bl/label->bitmap :010x11) => 2r11010)
- )
+   (tt/fact
+    "Make sure a-pnt parsed correctly"
+    a-pnt => {:terms {0 1, 2 6, 8 18}})
+
+   (tt/fact
+    "Make sure b-pnt parsed correctly"
+    b-pnt => {:terms {0 1, 2 -1, 8 2}})
+
+   (tt/fact
+    "Compute the product of multivectors."
+    (c3sp/prod a-pnt b-pnt) => {:terms {0 -5, 2 5, 8 20, 10 30}})
+
+   (tt/fact
+    "convert bitmap to text representation."
+    (-> (c3sp/prod a-pnt b-pnt)
+        :terms
+        c3sp/to-alias) => {:s -5, :e2 5, :ni 20, :e2ni 30})
+
+   (tt/fact
+    "convert text representation to bits."
+    (c3bl/alias->bitmap :e2nio) => 2r11010) ))
